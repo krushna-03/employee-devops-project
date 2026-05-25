@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: employee-app
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: employee-app
+
+  template:
+    metadata:
+      labels:
+        app: employee-app
+
+    spec:
+      containers:
+      - name: employee-app
+        image: employee-app:v8
+        imagePullPolicy: Never
+
+        env:
+        - name: MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: employee-config
+              key: MESSAGE
+
+        - name: APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: employee-secret
+              key: APP_SECRET
+
+        ports:
+        - containerPort: 3000
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+
+          limits:
+            cpu: "500m"
+            memory: "128Mi"
+
+        volumeMounts:
+        - name: employee-storage
+          mountPath: /app/data
+
+      volumes:
+      - name: employee-storage
+        persistentVolumeClaim:
+          claimName: employee-pvc

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: employee-config
+
+data:
+  MESSAGE: "i am krushnakanth.enjete"
