@@ -44,7 +44,7 @@ pipeline {
                 sh '''
                 echo "===== TAG IMAGE ====="
 
-                docker tag employee-app:${BUILD_NUMBER} enjetekrushna/employee-app:${BUILD_NUMBER}
+                docker tag employee-app:${BUILD_NUMBER} enjetekrushna/employee-pipeline:${BUILD_NUMBER}
                 '''
             }
         }
@@ -56,7 +56,7 @@ pipeline {
                 sh '''
                 echo "===== PUSH IMAGE ====="
 
-                docker push enjetekrushna/employee-app:${BUILD_NUMBER}
+                docker push enjetekrushna/employee-pipeline:${BUILD_NUMBER}
                 '''
             }
         }
@@ -74,3 +74,4 @@ pipeline {
         }
     }
 }
+
