@@ -7,7 +7,7 @@ const MESSAGE =
   process.env.MESSAGE || "Default Message";
 
 app.get('/', (req, res) => {
-  res.send(`<h1>Welcome Employee App - Dynamic Version Test 21</h1>`);
+  res.send(`<h1>krushnakanth testing new jenkins pipeline "employee-pipeline"</h1>`);
 });
 
 app.get('/health', (req, res) => {
