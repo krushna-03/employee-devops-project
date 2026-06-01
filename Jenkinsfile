@@ -36,5 +36,41 @@ pipeline {
                 }
             }
         }
+
+        stage('Tag Image') {
+
+            steps {
+
+                sh '''
+                echo "===== TAG IMAGE ====="
+
+                docker tag employee-app:${BUILD_NUMBER} enjetekrushna/employee-app:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+        stage('Push Image') {
+
+            steps {
+
+                sh '''
+                echo "===== PUSH IMAGE ====="
+
+                docker push enjetekrushna/employee-app:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+        stage('Deploy') {
+
+            steps {
+
+                sh '''
+                echo "===== HELM DEPLOY ====="
+
+                helm upgrade --install employee-release ./employee-chart -n dev --set image.tag=${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 }
