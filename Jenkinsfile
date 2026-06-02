@@ -7,6 +7,15 @@ pipeline {
         IMAGE_NAME = 'enjetekrushna/employee-pipeline'
     }
 
+    parameters {
+
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['DEV', 'QA', 'PROD'],
+            description: 'Choose deployment environment'
+        )
+    }
+
     stages {
 
         stage('Build Image') {
@@ -72,6 +81,8 @@ pipeline {
 
                 sh '''
                 echo "===== HELM DEPLOY ====="
+
+                echo "Selected Environment = ${ENVIRONMENT}"
 
                 helm upgrade --install employee-release ./employee-chart -n dev --set image.tag=${BUILD_NUMBER}
                 '''
