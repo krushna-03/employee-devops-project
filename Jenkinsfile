@@ -2,6 +2,11 @@ pipeline {
 
     agent any
 
+    environment {
+
+        IMAGE_NAME = 'enjetekrushna/employee-pipeline'
+    }
+
     stages {
 
         stage('Build Image') {
@@ -44,7 +49,7 @@ pipeline {
                 sh '''
                 echo "===== TAG IMAGE ====="
 
-                docker tag employee-app:${BUILD_NUMBER} enjetekrushna/employee-pipeline:${BUILD_NUMBER}
+                docker tag employee-app:${BUILD_NUMBER} ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
@@ -56,7 +61,7 @@ pipeline {
                 sh '''
                 echo "===== PUSH IMAGE ====="
 
-                docker push enjetekrushna/employee-pipeline:${BUILD_NUMBER}
+                docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
