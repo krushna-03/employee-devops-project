@@ -1,3 +1,4 @@
+```groovy
 pipeline {
 
     agent any
@@ -73,5 +74,23 @@ pipeline {
             }
         }
     }
-}
 
+    post {
+
+        success {
+
+            echo 'PIPELINE SUCCESSFUL'
+        }
+
+        failure {
+
+            echo 'PIPELINE FAILED'
+        }
+
+        always {
+
+            echo 'PIPELINE FINISHED'
+        }
+    }
+}
+```
