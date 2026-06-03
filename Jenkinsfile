@@ -27,11 +27,14 @@ pipeline {
 
             steps {
 
-                sh '''
-                echo "===== BUILD IMAGE ====="
+                retry(2) {
 
-                docker build -t employee-app:${BUILD_NUMBER} .
-                '''
+                  sh '''
+                  echo "===== BUILD IMAGE ====="
+
+                  docker build -t employee-app:${BUILD_NUMBER} .
+                  '''
+                }    
             }
         }
 
