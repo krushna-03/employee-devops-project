@@ -2,6 +2,11 @@ pipeline {
 
     agent any
 
+    options {
+
+        timestamps()
+    }
+
     environment {
 
         IMAGE_NAME = 'enjetekrushna/employee-pipeline'
