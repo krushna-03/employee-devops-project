@@ -1,3 +1,4 @@
+```groovy
 pipeline {
 
     agent any
@@ -5,6 +6,7 @@ pipeline {
     options {
 
         timestamps()
+        timeout(time: 5, unit: 'MINUTES')
     }
 
     environment {
@@ -16,12 +18,34 @@ pipeline {
 
         choice(
             name: 'ENVIRONMENT',
-            choices: ['DEV', 'QA', 'PROD'],
+            choices: ['DEV','QA','PROD'],
             description: 'Choose deployment environment'
         )
     }
 
     stages {
+
+        stage('Parallel Checks') {
+
+            parallel {
+
+                stage('Security Scan') {
+
+                    steps {
+
+                        sh 'echo "Running Security Scan..."'
+                    }
+                }
+
+                stage('Lint Check') {
+
+                    steps {
+
+                        sh 'echo "Running Lint Check..."'
+                    }
+                }
+            }
+        }
 
         stage('Build Image') {
 
@@ -30,9 +54,9 @@ pipeline {
                 retry(2) {
 
                     sh '''
-                    echo "===== BUILD IMAGE =====" 
-                    docker build -t employee-app:${BUILD_NUMBER} .
+                    echo "===== BUILD IMAGE ====="
 
+                    docker build -t employee-app:${BUILD_NUMBER} .
                     '''
                 }
             }
@@ -51,9 +75,8 @@ pipeline {
                 ]) {
 
                     sh '''
-                    echo "===== LOGIN TO DOCKERHUB ====="
-
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    echo "$DOCKER_PASS" | docker login \
+                    -u "$DOCKER_USER" --password-stdin
                     '''
                 }
             }
@@ -64,9 +87,8 @@ pipeline {
             steps {
 
                 sh '''
-                echo "===== TAG IMAGE ====="
-
-                docker tag employee-app:${BUILD_NUMBER} ${IMAGE_NAME}:${BUILD_NUMBER}
+                docker tag employee-app:${BUILD_NUMBER} \
+                ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
         }
@@ -76,10 +98,22 @@ pipeline {
             steps {
 
                 sh '''
-                echo "===== PUSH IMAGE ====="
-
                 docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
+            }
+        }
+
+        stage('Manual Approval') {
+
+            input {
+
+                message "Deploy to selected environment?"
+                ok "Proceed"
+            }
+
+            steps {
+
+                echo "Deployment Approved"
             }
         }
 
@@ -96,11 +130,10 @@ pipeline {
             steps {
 
                 sh '''
-                echo "===== HELM DEPLOY ====="
-
-                echo "Selected Environment = ${ENVIRONMENT}"
-
-                helm upgrade --install employee-release ./employee-chart -n dev --set image.tag=${BUILD_NUMBER}
+                helm upgrade --install employee-release \
+                ./employee-chart \
+                -n dev \
+                --set image.tag=${BUILD_NUMBER}
                 '''
             }
         }
@@ -120,7 +153,10 @@ pipeline {
 
         always {
 
-            echo 'PIPELINE FINISHED'
+            cleanWs()
+
+            echo 'WORKSPACE CLEANED'
         }
     }
 }
+```
