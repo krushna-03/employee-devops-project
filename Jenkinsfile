@@ -77,6 +77,14 @@ pipeline {
 
         stage('Deploy') {
 
+            when {
+
+                expression {
+
+                    params.ENVIRONMENT == 'DEV'
+                }
+            }
+
             steps {
 
                 sh '''
