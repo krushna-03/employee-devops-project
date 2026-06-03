@@ -1,3 +1,4 @@
+```groovy
 pipeline {
 
     agent any
@@ -29,12 +30,12 @@ pipeline {
 
                 retry(2) {
 
-                  sh '''
-                  echo "===== BUILD IMAGE ====="
+                    sh '''
+                    echo "===== TESTING RETRY ====="
 
-                  docker build -t employee-app:${BUILD_NUMBER} .
-                  '''
-                }    
+                    false
+                    '''
+                }
             }
         }
 
@@ -124,3 +125,4 @@ pipeline {
         }
     }
 }
+```
