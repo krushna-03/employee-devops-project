@@ -30,9 +30,9 @@ pipeline {
                 retry(2) {
 
                     sh '''
-                    echo "===== TESTING RETRY ====="
+                    echo "===== BUILD IMAGE =====" 
+                    docker build -t employee-app:${BUILD_NUMBER} .
 
-                    false
                     '''
                 }
             }
